@@ -87,7 +87,8 @@
     {
         NSMutableArray * lpDataArray = [NSMutableArray arrayWithCapacity:6];
         [lpDataArray addObject:[NSString  stringWithFormat:@"%f",i*1.0]];
-        [lpDataArray addObject:[NSString  stringWithFormat:@"%@",[formatter stringFromDate:[NSDate date]]]];
+        [lpDataArray addObject:[NSString  stringWithFormat:@"时间 %@",[formatter stringFromDate:[NSDate date]]]];
+        [lpDataArray addObject:[NSString  stringWithFormat:@"转速 %d RPM",3980]];
         
         
 
@@ -112,6 +113,7 @@
 	[secs addObject:@"2"]; //占位2/7
 	[secs addObject:@"1"]; //占位1/7
 	[self.candleChart addSections:3 withRatios:secs]; //初始化分区，按照给定的比例关系
+    [self.candleChart getSection:1].hidden = YES;
 	[self.candleChart getSection:2].hidden = YES; //隐藏第3个分区
 	[[[self.candleChart sections] objectAtIndex:0] addYAxis:0]; //从分区的Y方向0点开始绘制Y轴
 	[[[self.candleChart sections] objectAtIndex:1] addYAxis:0];
@@ -140,6 +142,7 @@
 	[serie setObject:@"255,0,0" forKey:@"selectedColor"];
 	[serie setObject:@"255,0,0" forKey:@"negativeSelectedColor"];
 	[serie setObject:@"255,255,0" forKey:KEY_LABEL_COLOR];
+    [serie setObject:@"255,255,255" forKey:KEY_LABEL_DETAIL_INFO_COLOR];
 	[serie setObject:@"255,0,0" forKey:@"labelNegativeColor"];
     [serie setObject:@"um" forKey:KEY_UNIT];
 	[series addObject:serie];

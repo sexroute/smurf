@@ -317,12 +317,31 @@
                 {
                     lpFontName = self.m_pStrFontName;
                 }
+                
+                int lnLabelType =[[lbl objectForKey:KEY_LABEL_TYPE]intValue];
+                
+                int lnSkipWidth = [[lbl objectForKey:KEY_SKIP_WIDTH]intValue];
+                
+                
 				NSArray *colors = [color componentsSeparatedByString:@","];
+                
 				CGContextRef context = UIGraphicsGetCurrentContext();
 				CGContextSetShouldAntialias(context, YES);
 				CGContextSetRGBFillColor(context, [[colors objectAtIndex:0] floatValue], [[colors objectAtIndex:1] floatValue], [[colors objectAtIndex:2] floatValue], 1.0);
 				[text drawAtPoint:CGPointMake(sec.frame.origin.x+sec.paddingLeft+2+w,sec.frame.origin.y+lnPaddingtop) withFont:[UIFont fontWithName:self.m_pStrFontName size: lnFontSize]];
-				w += [text sizeWithFont:[UIFont fontWithName:lpFontName size: lnFontSize]].width;
+                if(lnSkipWidth)
+                    
+                {
+                    //w += [text sizeWithFont:[UIFont fontWithName:lpFontName size: lnFontSize]].width;
+                }else
+                {
+                    w += [text sizeWithFont:[UIFont fontWithName:lpFontName size: lnFontSize]].width;
+                }
+				
+                if (lnLabelType == KEY_LABEL_TYPE_UNIT)
+                {
+                    w += 10;
+                }
 			}
 			[label release];
 		}

@@ -24,10 +24,13 @@
 #define KEY_NEGATIVE_COLOR @"negativeColor"
 #define KEY_PADDING_LEFT @"paddingleft"
 #define KEY_PADDING_TOP @"paddingtop"
+#define KEY_SKIP_WIDTH @"skipwidth"
 #define DEFAULT_FONT_NAME @"Gill Sans"
 #define KEY_UNIT       @"unit"
 #define KEY_LABEL_COLOR @"labelColor"
 #define KEY_LABEL_DETAIL_INFO_COLOR @"DetailInfoColor"
+#define KEY_LABEL_DETAIL_INFO_COLOR2 @"DetailInfoColor2"
+#define KEY_LABEL_DETAIL_INFO_COLOR3 @"DetailInfoColor3"
 #define KEY_POINT_WIDTH @"pointwidth"
 #define KEY_LABEL_TYPE @"labeltype"
 #define KEY_LABEL_TYPE_DETAIL 2

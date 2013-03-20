@@ -324,6 +324,9 @@
         [clr appendFormat:@"%f",ZB];
         [tmp setObject:clr forKey:KEY_COLOR];
         
+        //label type
+        [tmp setObject:[NSString stringWithFormat:@"%d",KEY_LABEL_TYPE_UNIT] forKey:KEY_LABEL_TYPE];
+        
         //position
         [tmp setObject:@"7" forKey:KEY_PADDING_TOP];
         [label addObject:tmp];
@@ -341,17 +344,49 @@
         
         //color
         clr = [[[NSMutableString alloc] init]autorelease];
-        [clr appendFormat:@"%f,",ZR];
-        [clr appendFormat:@"%f,",ZG];
-        [clr appendFormat:@"%f",ZB];
+        [clr appendFormat:@"%f,",dR];
+        [clr appendFormat:@"%f,",dG];
+        [clr appendFormat:@"%f",dB];
         [tmp setObject:clr forKey:KEY_COLOR];
         
         //label type
         [tmp setObject:[NSString stringWithFormat:@"%d",KEY_LABEL_TYPE_DETAIL] forKey:KEY_LABEL_TYPE];
         //position
-        [tmp setObject:@"7" forKey:KEY_PADDING_TOP];
+        [tmp setObject:@"-11" forKey:KEY_PADDING_TOP];
+        //width
+        [tmp setObject:@"1" forKey:KEY_SKIP_WIDTH];
         [label addObject:tmp];
-        [lpPool drain];
+  
+        
+        
+        //3.detail info2
+  
+        if ([[data objectAtIndex:chart.selectedIndex] count]>2) {
+            lpStrInfo = [[data objectAtIndex:chart.selectedIndex] objectAtIndex:2];
+            l = [[[NSMutableString alloc] init]autorelease];
+            tmp = [[[NSMutableDictionary alloc] init]autorelease];
+            [l appendFormat:@"%@",lpStrInfo];
+            [tmp setObject:l forKey:KEY_TEXT];
+            
+            //font
+            [tmp setObject:@"12" forKey:KEY_FONT_SIZE];
+            [tmp setObject:lpLabelFontName forKey:KEY_FONT_NAME];
+            
+            //color
+            clr = [[[NSMutableString alloc] init]autorelease];
+            [clr appendFormat:@"%f,",dR];
+            [clr appendFormat:@"%f,",dG];
+            [clr appendFormat:@"%f",dB];
+            [tmp setObject:clr forKey:KEY_COLOR];
+            
+            //label type
+            [tmp setObject:[NSString stringWithFormat:@"%d",KEY_LABEL_TYPE_DETAIL] forKey:KEY_LABEL_TYPE];
+            //position
+            [tmp setObject:@"3" forKey:KEY_PADDING_TOP];
+            [label addObject:tmp];
+
+        }
+         [lpPool drain];
     }
     
     //    if(chart.selectedIndex!=-1 && chart.selectedIndex < data.count && [data objectAtIndex:chart.selectedIndex]!=nil){
