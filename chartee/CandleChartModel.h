@@ -10,6 +10,7 @@
 #import "ChartModel.h"
 #import "YAxis.h"
 #import "Chart.h"
+#import "constants.h"
 
 @interface CandleChartModel : ChartModel
 

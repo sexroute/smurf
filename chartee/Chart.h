@@ -14,6 +14,7 @@
 #import "AreaChartModel.h"
 #import "ColumnChartModel.h"
 #import "CandleChartModel.h"
+#import "constants.h"
 
 @class ChartModel;
 
@@ -42,6 +43,9 @@
     NSMutableDictionary *models;
 	UIColor        *borderColor;
 	NSString       *title;
+    NSString       *m_pStrFontName;
+    int            m_nYAxisFontSize;
+    int            m_nLabelFontSize;
 }
 
 @property (nonatomic)        bool  enableSelection;
@@ -68,6 +72,9 @@
 @property (nonatomic,retain) NSMutableDictionary *models;
 @property (nonatomic,retain) UIColor  *borderColor;
 @property (nonatomic,retain) NSString *title;
+@property (nonatomic,retain) NSString       *m_pStrFontName;
+@property (nonatomic)int            m_nYAxisFontSize;
+@property (nonatomic)int            m_nLabelFontSize;
 
 -(float)getLocalY:(float)val withSection:(int)sectionIndex withAxis:(int)yAxisIndex;
 -(void)setSelectedIndexByPoint:(CGPoint) point;

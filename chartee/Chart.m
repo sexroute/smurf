@@ -36,6 +36,7 @@
 @synthesize ratios;
 @synthesize models;
 @synthesize title;
+@synthesize m_pStrFontName;
 
 -(float)getLocalY:(float)val withSection:(int)sectionIndex withAxis:(int)yAxisIndex
 {
@@ -248,7 +249,8 @@
 	[self drawLabels];
 }
 
--(void)drawLabels{
+-(void)drawLabels
+{
 	for(int i=0;i<self.sections.count;i++){
 		Section *sec = [self.sections objectAtIndex:i];
 		if(sec.hidden){
@@ -291,14 +293,36 @@
 			for(int j=0;j<label.count;j++)
             {
 				NSMutableDictionary *lbl = [label objectAtIndex:j];
-				NSString *text  = [lbl objectForKey:@"text"];
-				NSString *color = [lbl objectForKey:@"color"];
+				NSString *text  = [lbl objectForKey:KEY_TEXT];
+				NSString *color = [lbl objectForKey:KEY_COLOR];
+                int lnFontSize =  [[lbl objectForKey:KEY_FONT_SIZE]intValue];
+                if (0 == lnFontSize)
+                {
+                    lnFontSize = self.m_nLabelFontSize;
+                }
+                int lnPaddingleft =  [[lbl objectForKey:KEY_PADDING_LEFT]intValue];
+                if (0 == lnPaddingleft)
+                {
+                    lnPaddingleft = sec.paddingLeft;
+                }
+                
+                int lnPaddingtop = [[lbl objectForKey:KEY_PADDING_TOP]intValue];
+                if (0 == lnPaddingtop)
+                {
+                    lnPaddingtop = 0;
+                }
+                
+                NSString * lpFontName = [lbl objectForKey:KEY_FONT_NAME];
+                if (nil == lpFontName)
+                {
+                    lpFontName = self.m_pStrFontName;
+                }
 				NSArray *colors = [color componentsSeparatedByString:@","];
 				CGContextRef context = UIGraphicsGetCurrentContext();
 				CGContextSetShouldAntialias(context, YES);
 				CGContextSetRGBFillColor(context, [[colors objectAtIndex:0] floatValue], [[colors objectAtIndex:1] floatValue], [[colors objectAtIndex:2] floatValue], 1.0);
-				[text drawAtPoint:CGPointMake(sec.frame.origin.x+sec.paddingLeft+2+w,sec.frame.origin.y) withFont:[UIFont systemFontOfSize: 12]];
-				w += [text sizeWithFont:[UIFont systemFontOfSize:12]].width;
+				[text drawAtPoint:CGPointMake(sec.frame.origin.x+sec.paddingLeft+2+w,sec.frame.origin.y+lnPaddingtop) withFont:[UIFont fontWithName:self.m_pStrFontName size: lnFontSize]];
+				w += [text sizeWithFont:[UIFont fontWithName:lpFontName size: lnFontSize]].width;
 			}
 			[label release];
 		}
@@ -345,12 +369,14 @@
 	CGFloat dash[] = {5};
 	CGContextSetLineDash (context,0,dash,1);
     
-	for(int secIndex=0;secIndex<self.sections.count;secIndex++){
+	for(int secIndex=0;secIndex<self.sections.count;secIndex++)
+    {
 		Section *sec = [self.sections objectAtIndex:secIndex];
 		if(sec.hidden){
 			continue;
 		}
-		for(int aIndex=0;aIndex<sec.yAxises.count;aIndex++){
+		for(int aIndex=0;aIndex<sec.yAxises.count;aIndex++)
+        {
 			YAxis *yaxis = [sec.yAxises objectAtIndex:aIndex];
 			NSString *format=[@"%." stringByAppendingFormat:@"%df",yaxis.decimal];
 			
@@ -360,7 +386,7 @@
 			CGContextAddLineToPoint(context,sec.frame.origin.x+sec.paddingLeft-2,baseY);
 			CGContextStrokePath(context);
 			
-			[[@"" stringByAppendingFormat:format,yaxis.baseValue] drawAtPoint:CGPointMake(sec.frame.origin.x-1,baseY-7) withFont:[UIFont systemFontOfSize: 12]];
+			[[@"" stringByAppendingFormat:format,yaxis.baseValue] drawAtPoint:CGPointMake(sec.frame.origin.x-1,baseY-7) withFont:[UIFont fontWithName:self.m_pStrFontName size: self.m_nYAxisFontSize]];
 			
 			CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:0.15 green:0.15 blue:0.15 alpha:1.0].CGColor);
 			CGContextMoveToPoint(context,sec.frame.origin.x+sec.paddingLeft,baseY);
@@ -380,7 +406,7 @@
 					CGContextAddLineToPoint(context,sec.frame.origin.x+sec.paddingLeft-2,iy);
 					CGContextStrokePath(context);
 					
-					[[@"" stringByAppendingFormat:format,yaxis.baseValue+i*step] drawAtPoint:CGPointMake(sec.frame.origin.x-1,iy-7) withFont:[UIFont systemFontOfSize: 12]];
+					[[@"" stringByAppendingFormat:format,yaxis.baseValue+i*step] drawAtPoint:CGPointMake(sec.frame.origin.x-1,iy-7) withFont:[UIFont fontWithName:self.m_pStrFontName size: self.m_nYAxisFontSize]];
 					
 					if(yaxis.baseValue + i*step < yaxis.max){
 						CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:0.15 green:0.15 blue:0.15 alpha:1.0].CGColor);
@@ -400,7 +426,7 @@
 					CGContextAddLineToPoint(context,sec.frame.origin.x+sec.paddingLeft-2,iy);
 					CGContextStrokePath(context);
 					
-					[[@"" stringByAppendingFormat:format,yaxis.baseValue-i*step] drawAtPoint:CGPointMake(sec.frame.origin.x-1,iy-7) withFont:[UIFont systemFontOfSize: 12]];
+					[[@"" stringByAppendingFormat:format,yaxis.baseValue-i*step] drawAtPoint:CGPointMake(sec.frame.origin.x-1,iy-7) withFont:[UIFont fontWithName:self.m_pStrFontName size: self.m_nYAxisFontSize]];
 					
 					if(yaxis.baseValue - i*step > yaxis.min){
 						CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:0.15 green:0.15 blue:0.15 alpha:1.0].CGColor);
@@ -662,7 +688,8 @@
  */
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
-	if (self) {
+	if (self)
+    {
 		self.enableSelection = YES;
 		self.isInitialized   = NO;
 		self.isSectionInitialized   = NO;
@@ -690,6 +717,11 @@
 		[mods release];
 		
 		[self setMultipleTouchEnabled:YES];
+        
+        //字体
+        self.m_pStrFontName = @"Gill Sans";
+        self.m_nLabelFontSize = DEFAULT_LABEL_FONT_SIZE;
+        self.m_nYAxisFontSize = DEFAULT_FONT_SIZE;
         
         //init models
         [self initModels];
@@ -738,8 +770,10 @@
 	[self drawChart];
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
     [super dealloc];
+    self.m_pStrFontName = nil;
 	[borderColor release];
 	[padding release];
 	[series release];

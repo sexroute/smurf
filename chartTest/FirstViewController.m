@@ -73,13 +73,13 @@
 
 -(void)InitData
 {
-    
-    NSMutableArray *   lpArray= [NSMutableArray arrayWithCapacity:1024];
-    for (int i=0; i<1024; i++)
+    int lnDataSize = 10;
+    NSMutableArray *   lpArray= [NSMutableArray arrayWithCapacity:lnDataSize];
+    for (int i=0; i<lnDataSize; i++)
     {
         NSMutableArray * lpDataArray = [NSMutableArray arrayWithCapacity:6];
         [lpDataArray addObject:[NSString  stringWithFormat:@"%f",i*1.0]];
-        [lpDataArray addObject:[NSString  stringWithFormat:@"%f",i*1.0]];
+        [lpDataArray addObject:[NSString  stringWithFormat:@"%f",i*1.0]];;
         [lpDataArray addObject:[NSString  stringWithFormat:@"%f",i*1.0]];
         [lpDataArray addObject:[NSString  stringWithFormat:@"%f",i*1.0]];
         [lpDataArray addObject:[NSString  stringWithFormat:@"%f",i*1.0]];
@@ -87,7 +87,7 @@
     }
    
     [self.candleChart appendToData:lpArray forName:@"price"];
-    [self.candleChart setRange:1024];
+    [self.candleChart setRange:lnDataSize];
 }
 
 -(void)initChart
@@ -127,8 +127,9 @@
 	[serie setObject:@"255,0,0" forKey:@"negativeColor"];
 	[serie setObject:@"255,0,0" forKey:@"selectedColor"];
 	[serie setObject:@"255,0,0" forKey:@"negativeSelectedColor"];
-	[serie setObject:@"255,0,0" forKey:@"labelColor"];
+	[serie setObject:@"255,255,0" forKey:KEY_LABEL_COLOR];
 	[serie setObject:@"255,0,0" forKey:@"labelNegativeColor"];
+    [serie setObject:@"um" forKey:KEY_UNIT];
 	[series addObject:serie];
 	[secOne addObject:serie];
 	[data release];

@@ -97,6 +97,7 @@
 		4C2AFC0716F3095200C99FDE /* YAxis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YAxis.h; sourceTree = "<group>"; };
 		4C2AFC0816F3095200C99FDE /* YAxis.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YAxis.m; sourceTree = "<group>"; };
 		4C2AFC1116F30C7200C99FDE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		4CFA92A216F98D8D00733FC3 /* constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = constants.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -228,6 +229,7 @@
 				4C2AFC0616F3095200C99FDE /* Section.m */,
 				4C2AFC0716F3095200C99FDE /* YAxis.h */,
 				4C2AFC0816F3095200C99FDE /* YAxis.m */,
+				4CFA92A216F98D8D00733FC3 /* constants.h */,
 			);
 			path = chartee;
 			sourceTree = SOURCE_ROOT;
@@ -549,6 +551,7 @@
 				4C2AFBF416F308C700C99FDE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4C2AFBF516F308C700C99FDE /* Build configuration list for PBXNativeTarget "chartTestTests" */ = {
 			isa = XCConfigurationList;
@@ -557,6 +560,7 @@
 				4C2AFBF716F308C700C99FDE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

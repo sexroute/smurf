@@ -8,9 +8,75 @@
 
 #import "CandleChartModel.h"
 
-@implementation CandleChartModel
 
--(void)drawSerie:(Chart *)chart serie:(NSMutableDictionary *)serie{
+@implementation CandleChartModel
+//绘制曲线
+-(void)drawSerie:(Chart *)chart serie:(NSMutableDictionary *)serie
+{
+  // return [self drawSerie_0:chart serie:serie];
+    [serie setObject:@"176,52,52" forKey:@"color"];
+    [serie setObject:@"77,143,42" forKey:@"negativeColor"];
+    [serie setObject:@"176,52,52" forKey:@"selectedColor"];
+    [serie setObject:@"77,143,42" forKey:@"negativeSelectedColor"];
+    
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetShouldAntialias(context, NO);
+    CGContextSetLineWidth(context, 1.0f);
+    
+    NSMutableArray *data          = [serie objectForKey:@"data"];
+    int            yAxis          = [[serie objectForKey:@"yAxis"] intValue];
+    int            section        = [[serie objectForKey:@"section"] intValue];
+    NSString       *color         = [serie objectForKey:@"color"];
+    NSString       *negativeColor = [serie objectForKey:@"negativeColor"];
+    NSString       *selectedColor = [serie objectForKey:@"selectedColor"];
+    NSString       *negativeSelectedColor = [serie objectForKey:@"negativeSelectedColor"];
+    
+    float R   = [[[color componentsSeparatedByString:@","] objectAtIndex:0] floatValue]/255;
+    float G   = [[[color componentsSeparatedByString:@","] objectAtIndex:1] floatValue]/255;
+    float B   = [[[color componentsSeparatedByString:@","] objectAtIndex:2] floatValue]/255;
+    
+    Section *sec = [chart.sections objectAtIndex:section];
+    for(int i=chart.rangeFrom;i<chart.rangeTo;i++){
+        if(i == data.count){
+            break;
+        }
+        if([data objectAtIndex:i] == nil){
+            continue;
+        }
+        
+        
+        
+        float val  = [[[data objectAtIndex:i] objectAtIndex:0] floatValue];
+        float ix  = sec.frame.origin.x+sec.paddingLeft+(i-chart.rangeFrom)*chart.plotWidth;
+        float iNx = sec.frame.origin.x+sec.paddingLeft+(i+1-chart.rangeFrom)*chart.plotWidth;
+        float iyo = [chart getLocalY:val withSection:section withAxis:yAxis];
+        float iyh = [chart getLocalY:val withSection:section withAxis:yAxis];
+        float iyl = [chart getLocalY:val withSection:section withAxis:yAxis];
+        
+        
+        CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:R green:G blue:B alpha:1.0].CGColor);
+        
+        if(i == chart.selectedIndex && chart.selectedIndex < data.count && [data objectAtIndex:chart.selectedIndex]!=nil){
+            CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:0.2 green:0.2 blue:0.2 alpha:1.0].CGColor);
+            CGContextMoveToPoint(context, ix+chart.plotWidth/2, sec.frame.origin.y+sec.paddingTop);
+            CGContextAddLineToPoint(context,ix+chart.plotWidth/2,sec.frame.size.height+sec.frame.origin.y);
+            CGContextStrokePath(context);
+        }
+        
+        CGContextMoveToPoint(context, ix+chart.plotPadding, iyo);
+        CGContextAddLineToPoint(context, iNx-chart.plotPadding,iyo);
+        CGContextStrokePath(context);
+        
+        CGContextMoveToPoint(context, ix+chart.plotWidth/2, iyh);
+        CGContextAddLineToPoint(context,ix+chart.plotWidth/2,iyl);
+        CGContextStrokePath(context);
+    }
+    
+}
+//绘制曲线
+-(void)drawSerie_0:(Chart *)chart serie:(NSMutableDictionary *)serie
+{
+    
     [serie setObject:@"176,52,52" forKey:@"color"];
     [serie setObject:@"77,143,42" forKey:@"negativeColor"];
     [serie setObject:@"176,52,52" forKey:@"selectedColor"];
@@ -156,142 +222,229 @@
 	    return;
 	}
 	
-	NSMutableArray *data          = [serie objectForKey:@"data"];
-	NSString       *color         = [serie objectForKey:@"color"];
-	NSString       *negativeColor = [serie objectForKey:@"negativeColor"];
+	NSMutableArray *data          = [serie objectForKey:KEY_DATA];
+	NSString       *color         = [serie objectForKey:KEY_COLOR];
+	NSString       *detailInfoColor = [serie objectForKey:KEY_LABEL_DETAIL_INFO_COLOR];
+    NSString       *labelColor         = [serie objectForKey:KEY_LABEL_COLOR];
+    NSString       *lpStrUnit         = [serie objectForKey:KEY_UNIT];
+    NSString       *lpLabelFontName  = [serie objectForKey:KEY_LABEL_FONT_NAME];
+    if (nil == lpLabelFontName)
+    {
+        lpLabelFontName = DEFAULT_FONT_NAME;
+    }
+    int lnLabelFontSize = [[serie objectForKey:KEY_LABEL_DETAIL_FONT_SIZE]intValue];
+    if (0 == lnLabelFontSize)
+    {
+        lnLabelFontSize = DEFAULT_FONT_SIZE;
+    }
 	
 	float R   = [[[color componentsSeparatedByString:@","] objectAtIndex:0] floatValue]/255;
 	float G   = [[[color componentsSeparatedByString:@","] objectAtIndex:1] floatValue]/255;
 	float B   = [[[color componentsSeparatedByString:@","] objectAtIndex:2] floatValue]/255;
-	float NR  = [[[negativeColor componentsSeparatedByString:@","] objectAtIndex:0] floatValue]/255;
-	float NG  = [[[negativeColor componentsSeparatedByString:@","] objectAtIndex:1] floatValue]/255;
-	float NB  = [[[negativeColor componentsSeparatedByString:@","] objectAtIndex:2] floatValue]/255;
 	
-	float ZR  = 1;
-	float ZG  = 1;
-	float ZB  = 1;
+    float dR  = [[[detailInfoColor componentsSeparatedByString:@","] objectAtIndex:0] floatValue]/255;
+	float dG  = [[[detailInfoColor componentsSeparatedByString:@","] objectAtIndex:1] floatValue]/255;
+	float dB  = [[[detailInfoColor componentsSeparatedByString:@","] objectAtIndex:2] floatValue]/255;
+    
+    float ZR  = [[[labelColor componentsSeparatedByString:@","] objectAtIndex:0] floatValue]/255;
+	float ZG  = [[[labelColor componentsSeparatedByString:@","] objectAtIndex:1] floatValue]/255;
+	float ZB  = [[[labelColor componentsSeparatedByString:@","] objectAtIndex:2] floatValue]/255;
 	
-    if(chart.selectedIndex!=-1 && chart.selectedIndex < data.count && [data objectAtIndex:chart.selectedIndex]!=nil){
-        float high  = [[[data objectAtIndex:chart.selectedIndex] objectAtIndex:2] floatValue];
-        float low   = [[[data objectAtIndex:chart.selectedIndex] objectAtIndex:3] floatValue];
-        float open  = [[[data objectAtIndex:chart.selectedIndex] objectAtIndex:0] floatValue];
-        float close = [[[data objectAtIndex:chart.selectedIndex] objectAtIndex:1] floatValue];
-        float inc   =  (close-open)*100/open;
+    if(chart.selectedIndex!=-1 && chart.selectedIndex < data.count && [data objectAtIndex:chart.selectedIndex]!=nil)
+    {
+        NSAutoreleasePool * lpPool = [[NSAutoreleasePool alloc]init];
+        float lfVal = [[[data objectAtIndex:chart.selectedIndex] objectAtIndex:0]floatValue];
+        NSString * lpStrInfo   = [[data objectAtIndex:chart.selectedIndex] objectAtIndex:1] ;
+        NSMutableDictionary *tmp = [[[NSMutableDictionary alloc] init]autorelease];
+        NSMutableString *l = [[[NSMutableString alloc] init]autorelease];
         
-        NSMutableDictionary *tmp = [[NSMutableDictionary alloc] init];
-        NSMutableString *l = [[NSMutableString alloc] init];
-        [l appendFormat:@"Open:%.2f",open];
-        [tmp setObject:l forKey:@"text"];
-        [l release];
-        NSMutableString *clr = [[NSMutableString alloc] init];
+        //1.add val
+        //val
+        [l appendFormat:@"%.2f",lfVal];
+        [tmp setObject:l forKey:KEY_TEXT];
+        
+        //font
+        [tmp setObject:@"32" forKey:KEY_FONT_SIZE];
+        [tmp setObject:lpLabelFontName forKey:KEY_FONT_NAME];
+        
+        //color
+        NSMutableString *clr = [[[NSMutableString alloc] init]autorelease];
         [clr appendFormat:@"%f,",ZR];
         [clr appendFormat:@"%f,",ZG];
         [clr appendFormat:@"%f",ZB];
-        [tmp setObject:clr forKey:@"color"];
-        [clr release];
+        [tmp setObject:clr forKey:KEY_COLOR];
+        
+        //position
+        [tmp setObject:@"-11" forKey:KEY_PADDING_TOP];
         [label addObject:tmp];
-        [tmp release];
         
-        tmp = [[NSMutableDictionary alloc] init];
-        l = [[NSMutableString alloc] init];
-        [l appendFormat:@"Close:%.2f",close];
-        [tmp setObject:l forKey:@"text"];
-        [l release];
-        clr = [[NSMutableString alloc] init];
-        if(close>open){
-            [clr appendFormat:@"%f,",R];
-            [clr appendFormat:@"%f,",G];
-            [clr appendFormat:@"%f",B];
-        }else if (close < open) {
-            [clr appendFormat:@"%f,",NR];
-            [clr appendFormat:@"%f,",NG];
-            [clr appendFormat:@"%f",NB];
-        }else{
-            [clr appendFormat:@"%f,",ZR];
-            [clr appendFormat:@"%f,",ZG];
-            [clr appendFormat:@"%f",ZB];
-        }
-        [tmp setObject:clr forKey:@"color"];
-        [clr release];
+        //2.add unit
+        l = [[[NSMutableString alloc] init]autorelease];
+        tmp = [[[NSMutableDictionary alloc] init]autorelease];
+        [l appendFormat:@"%@",lpStrUnit];
+        [tmp setObject:l forKey:KEY_TEXT];
+        
+        //font
+        [tmp setObject:@"12" forKey:KEY_FONT_SIZE];
+        [tmp setObject:lpLabelFontName forKey:KEY_FONT_NAME];
+        
+        //color
+        clr = [[[NSMutableString alloc] init]autorelease];
+        [clr appendFormat:@"%f,",ZR];
+        [clr appendFormat:@"%f,",ZG];
+        [clr appendFormat:@"%f",ZB];
+        [tmp setObject:clr forKey:KEY_COLOR];
+        
+        //position
+        [tmp setObject:@"7" forKey:KEY_PADDING_TOP];
         [label addObject:tmp];
-        [tmp release];
         
-        tmp = [[NSMutableDictionary alloc] init];
-        l = [[NSMutableString alloc] init];
-        [l appendFormat:@"High:%.2f",high];
-        [tmp setObject:l forKey:@"text"];
-        [l release];
-        clr = [[NSMutableString alloc] init];
-        if(high>open){
-            [clr appendFormat:@"%f,",R];
-            [clr appendFormat:@"%f,",G];
-            [clr appendFormat:@"%f",B];
-        }else{
-            [clr appendFormat:@"%f,",ZR];
-            [clr appendFormat:@"%f,",ZG];
-            [clr appendFormat:@"%f",ZB];
-        }
-        [tmp setObject:clr forKey:@"color"];
-        [clr release];
+        
+        //3.detail info
+        l = [[[NSMutableString alloc] init]autorelease];
+        tmp = [[[NSMutableDictionary alloc] init]autorelease];
+        [l appendFormat:@"%@",lpStrUnit];
+        [tmp setObject:l forKey:KEY_TEXT];
+        
+        //font
+        [tmp setObject:@"12" forKey:KEY_FONT_SIZE];
+        [tmp setObject:lpLabelFontName forKey:KEY_FONT_NAME];
+        
+        //color
+        clr = [[[NSMutableString alloc] init]autorelease];
+        [clr appendFormat:@"%f,",ZR];
+        [clr appendFormat:@"%f,",ZG];
+        [clr appendFormat:@"%f",ZB];
+        [tmp setObject:clr forKey:KEY_COLOR];
+        
+        //position
+        [tmp setObject:@"7" forKey:KEY_PADDING_TOP];
         [label addObject:tmp];
-        [tmp release];
-        
-        tmp = [[NSMutableDictionary alloc] init];
-        l = [[NSMutableString alloc] init];
-        [l appendFormat:@"Low:%.2f ",low];
-        [tmp setObject:l forKey:@"text"];
-        [l release];
-        clr = [[NSMutableString alloc] init];
-        if(low>open){
-            [clr appendFormat:@"%f,",R];
-            [clr appendFormat:@"%f,",G];
-            [clr appendFormat:@"%f",B];
-        }else if(low<open){
-            [clr appendFormat:@"%f,",NR];
-            [clr appendFormat:@"%f,",NG];
-            [clr appendFormat:@"%f",NB];
-        }else{
-            [clr appendFormat:@"%f,",ZR];
-            [clr appendFormat:@"%f,",ZG];
-            [clr appendFormat:@"%f",ZB];
-        }
-        
-        [tmp setObject:clr forKey:@"color"];
-        [clr release];
-        [label addObject:tmp];
-        [tmp release];
-        
-        
-        tmp = [[NSMutableDictionary alloc] init];
-        l = [[NSMutableString alloc] init];
-        [l appendFormat:@"Change:%.2f%@  ",inc,@"%"];
-        [tmp setObject:l forKey:@"text"];
-        [l release];
-        clr = [[NSMutableString alloc] init];
-        if(inc > 0){
-            [clr appendFormat:@"%f,",R];
-            [clr appendFormat:@"%f,",G];
-            [clr appendFormat:@"%f",B];
-        }else if(inc < 0){
-            [clr appendFormat:@"%f,",NR];
-            [clr appendFormat:@"%f,",NG];
-            [clr appendFormat:@"%f",NB];
-        }else{
-            [clr appendFormat:@"%f,",ZR];
-            [clr appendFormat:@"%f,",ZG];
-            [clr appendFormat:@"%f",ZB];
-        }
-        
-        [tmp setObject:clr forKey:@"color"];
-        [clr release];
-        [label addObject:tmp];
-        [tmp release];
-        
+        [lpPool drain];
     }
+    
+    //    if(chart.selectedIndex!=-1 && chart.selectedIndex < data.count && [data objectAtIndex:chart.selectedIndex]!=nil){
+    //        float high  = [[[data objectAtIndex:chart.selectedIndex] objectAtIndex:2] floatValue];
+    //        float low   = [[[data objectAtIndex:chart.selectedIndex] objectAtIndex:3] floatValue];
+    //        float open  = [[[data objectAtIndex:chart.selectedIndex] objectAtIndex:0] floatValue];
+    //        float close = [[[data objectAtIndex:chart.selectedIndex] objectAtIndex:1] floatValue];
+    //        float inc   =  (close-open)*100/open;
+    //
+    //        NSMutableDictionary *tmp = [[NSMutableDictionary alloc] init];
+    //        NSMutableString *l = [[NSMutableString alloc] init];
+    //        [l appendFormat:@"Open:%.2f",open];
+    //        [tmp setObject:l forKey:@"text"];
+    //        [l release];
+    //        NSMutableString *clr = [[NSMutableString alloc] init];
+    //        [clr appendFormat:@"%f,",ZR];
+    //        [clr appendFormat:@"%f,",ZG];
+    //        [clr appendFormat:@"%f",ZB];
+    //        [tmp setObject:clr forKey:@"color"];
+    //        [clr release];
+    //        [label addObject:tmp];
+    //        [tmp release];
+    //
+    //        tmp = [[NSMutableDictionary alloc] init];
+    //        l = [[NSMutableString alloc] init];
+    //        [l appendFormat:@"Close:%.2f",close];
+    //        [tmp setObject:l forKey:@"text"];
+    //        [l release];
+    //        clr = [[NSMutableString alloc] init];
+    //        if(close>open){
+    //            [clr appendFormat:@"%f,",R];
+    //            [clr appendFormat:@"%f,",G];
+    //            [clr appendFormat:@"%f",B];
+    //        }else if (close < open) {
+    //            [clr appendFormat:@"%f,",NR];
+    //            [clr appendFormat:@"%f,",NG];
+    //            [clr appendFormat:@"%f",NB];
+    //        }else{
+    //            [clr appendFormat:@"%f,",ZR];
+    //            [clr appendFormat:@"%f,",ZG];
+    //            [clr appendFormat:@"%f",ZB];
+    //        }
+    //        [tmp setObject:clr forKey:@"color"];
+    //        [clr release];
+    //        [label addObject:tmp];
+    //        [tmp release];
+    //
+    //        tmp = [[NSMutableDictionary alloc] init];
+    //        l = [[NSMutableString alloc] init];
+    //        [l appendFormat:@"High:%.2f",high];
+    //        [tmp setObject:l forKey:@"text"];
+    //        [l release];
+    //        clr = [[NSMutableString alloc] init];
+    //        if(high>open){
+    //            [clr appendFormat:@"%f,",R];
+    //            [clr appendFormat:@"%f,",G];
+    //            [clr appendFormat:@"%f",B];
+    //        }else{
+    //            [clr appendFormat:@"%f,",ZR];
+    //            [clr appendFormat:@"%f,",ZG];
+    //            [clr appendFormat:@"%f",ZB];
+    //        }
+    //        [tmp setObject:clr forKey:@"color"];
+    //        [clr release];
+    //        [label addObject:tmp];
+    //        [tmp release];
+    //
+    //        tmp = [[NSMutableDictionary alloc] init];
+    //        l = [[NSMutableString alloc] init];
+    //        [l appendFormat:@"Low:%.2f ",low];
+    //        [tmp setObject:l forKey:@"text"];
+    //        [l release];
+    //        clr = [[NSMutableString alloc] init];
+    //        if(low>open){
+    //            [clr appendFormat:@"%f,",R];
+    //            [clr appendFormat:@"%f,",G];
+    //            [clr appendFormat:@"%f",B];
+    //        }else if(low<open){
+    //            [clr appendFormat:@"%f,",NR];
+    //            [clr appendFormat:@"%f,",NG];
+    //            [clr appendFormat:@"%f",NB];
+    //        }else{
+    //            [clr appendFormat:@"%f,",ZR];
+    //            [clr appendFormat:@"%f,",ZG];
+    //            [clr appendFormat:@"%f",ZB];
+    //        }
+    //
+    //        [tmp setObject:clr forKey:@"color"];
+    //        [clr release];
+    //        [label addObject:tmp];
+    //        [tmp release];
+    //
+    //
+    //        tmp = [[NSMutableDictionary alloc] init];
+    //        l = [[NSMutableString alloc] init];
+    //        [l appendFormat:@"Change:%.2f%@  ",inc,@"%"];
+    //        [tmp setObject:l forKey:@"text"];
+    //        [l release];
+    //        clr = [[NSMutableString alloc] init];
+    //        if(inc > 0){
+    //            [clr appendFormat:@"%f,",R];
+    //            [clr appendFormat:@"%f,",G];
+    //            [clr appendFormat:@"%f",B];
+    //        }else if(inc < 0){
+    //            [clr appendFormat:@"%f,",NR];
+    //            [clr appendFormat:@"%f,",NG];
+    //            [clr appendFormat:@"%f",NB];
+    //        }else{
+    //            [clr appendFormat:@"%f,",ZR];
+    //            [clr appendFormat:@"%f,",ZG];
+    //            [clr appendFormat:@"%f",ZB];
+    //        }
+    //
+    //        [tmp setObject:clr forKey:@"color"];
+    //        [clr release];
+    //        [label addObject:tmp];
+    //        [tmp release];
+    //
+    //    }
     
 }
 
--(void)drawTips:(Chart *)chart serie:(NSMutableDictionary *)serie{
+-(void)drawTips:(Chart *)chart serie:(NSMutableDictionary *)serie
+{
 	CGContextRef context = UIGraphicsGetCurrentContext();
 	CGContextSetShouldAntialias(context, NO);
 	CGContextSetLineWidth(context, 1.0f);
@@ -301,6 +454,12 @@
 	NSString       *name          = [serie objectForKey:@"name"];
 	int            section        = [[serie objectForKey:@"section"] intValue];
 	NSMutableArray *category      = [serie objectForKey:@"category"];
+    NSString       *fontName      = [serie objectForKey:@"font"];
+    int             fontSize      = [[serie objectForKey:@"fontsize"]intValue];
+    if (fontSize <=0)
+    {
+        fontSize = 12;
+    }
 	Section *sec = [chart.sections objectAtIndex:section];
 	
 	if([type isEqualToString:@"candle"]){
@@ -318,7 +477,7 @@
 				
 				CGContextSetShouldAntialias(context, YES);
 				CGContextSetRGBFillColor(context, 0.2, 0.2, 0.2, 0.8);
-				CGSize size = [[category objectAtIndex:chart.selectedIndex] sizeWithFont:[UIFont fontWithName:@"Helvetica" size:12.0]];
+				CGSize size = [[category objectAtIndex:chart.selectedIndex] sizeWithFont:[UIFont fontWithName:fontName size:fontSize]];
 				
 				int x = ix+chart.plotWidth/2;
 				int y = sec.frame.origin.y+sec.paddingTop;
@@ -327,7 +486,7 @@
 				}
 				CGContextFillRect (context, CGRectMake (x, y, size.width+4,size.height+2));
 				CGContextSetRGBFillColor(context, 0.8, 0.8, 0.8, 1.0);
-				[[category objectAtIndex:chart.selectedIndex] drawAtPoint:CGPointMake(x+2,y+1) withFont:[UIFont fontWithName:@"Helvetica" size:12.0]];
+				[[category objectAtIndex:chart.selectedIndex] drawAtPoint:CGPointMake(x+2,y+1) withFont:[UIFont fontWithName:fontName size:fontSize]];
 				CGContextSetShouldAntialias(context, NO);
 			}
 		}
@@ -348,7 +507,7 @@
 				
 				CGContextSetShouldAntialias(context, YES);
 				CGContextSetRGBFillColor(context, 0.2, 0.2, 0.2, 0.8);
-				CGSize size = [[category objectAtIndex:chart.selectedIndex] sizeWithFont:[UIFont fontWithName:@"Helvetica" size:12.0]];
+				CGSize size = [[category objectAtIndex:chart.selectedIndex] sizeWithFont:[UIFont fontWithName:fontName size:fontSize]];
 				
 				int x = ix+chart.plotWidth/2;
 				int y = sec.frame.origin.y+sec.paddingTop;
@@ -357,7 +516,7 @@
 				}
 				CGContextFillRect (context, CGRectMake (x, y, size.width+4,size.height+2));
 				CGContextSetRGBFillColor(context, 0.8, 0.8, 0.8, 1.0);
-				[[category objectAtIndex:chart.selectedIndex] drawAtPoint:CGPointMake(x+2,y+1) withFont:[UIFont fontWithName:@"Helvetica" size:12.0]];
+				[[category objectAtIndex:chart.selectedIndex] drawAtPoint:CGPointMake(x+2,y+1) withFont:[UIFont fontWithName:fontName size:fontSize]];
 				CGContextSetShouldAntialias(context, NO);
 			}
 		}
