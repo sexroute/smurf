@@ -13,7 +13,7 @@
 //绘制曲线
 -(void)drawSerie:(Chart *)chart serie:(NSMutableDictionary *)serie
 {
-  // return [self drawSerie_0:chart serie:serie];
+    // return [self drawSerie_0:chart serie:serie];
     [serie setObject:@"176,52,52" forKey:@"color"];
     [serie setObject:@"77,143,42" forKey:@"negativeColor"];
     [serie setObject:@"176,52,52" forKey:@"selectedColor"];
@@ -21,22 +21,20 @@
     
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetShouldAntialias(context, NO);
-    CGContextSetLineWidth(context, 1.0f);
+    
     
     NSMutableArray *data          = [serie objectForKey:@"data"];
     int            yAxis          = [[serie objectForKey:@"yAxis"] intValue];
     int            section        = [[serie objectForKey:@"section"] intValue];
     NSString       *color         = [serie objectForKey:@"color"];
-    NSString       *negativeColor = [serie objectForKey:@"negativeColor"];
-    NSString       *selectedColor = [serie objectForKey:@"selectedColor"];
-    NSString       *negativeSelectedColor = [serie objectForKey:@"negativeSelectedColor"];
     
     float R   = [[[color componentsSeparatedByString:@","] objectAtIndex:0] floatValue]/255;
     float G   = [[[color componentsSeparatedByString:@","] objectAtIndex:1] floatValue]/255;
     float B   = [[[color componentsSeparatedByString:@","] objectAtIndex:2] floatValue]/255;
     
     Section *sec = [chart.sections objectAtIndex:section];
-    for(int i=chart.rangeFrom;i<chart.rangeTo;i++){
+    for(int i=chart.rangeFrom;i<chart.rangeTo;i++)
+    {
         if(i == data.count){
             break;
         }
@@ -44,32 +42,63 @@
             continue;
         }
         
-        
-        
         float val  = [[[data objectAtIndex:i] objectAtIndex:0] floatValue];
         float ix  = sec.frame.origin.x+sec.paddingLeft+(i-chart.rangeFrom)*chart.plotWidth;
         float iNx = sec.frame.origin.x+sec.paddingLeft+(i+1-chart.rangeFrom)*chart.plotWidth;
         float iyo = [chart getLocalY:val withSection:section withAxis:yAxis];
-        float iyh = [chart getLocalY:val withSection:section withAxis:yAxis];
-        float iyl = [chart getLocalY:val withSection:section withAxis:yAxis];
         
         
-        CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:R green:G blue:B alpha:1.0].CGColor);
         
-        if(i == chart.selectedIndex && chart.selectedIndex < data.count && [data objectAtIndex:chart.selectedIndex]!=nil){
-            CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:0.2 green:0.2 blue:0.2 alpha:1.0].CGColor);
-            CGContextMoveToPoint(context, ix+chart.plotWidth/2, sec.frame.origin.y+sec.paddingTop);
-            CGContextAddLineToPoint(context,ix+chart.plotWidth/2,sec.frame.size.height+sec.frame.origin.y);
+        
+        
+        if(i == chart.selectedIndex && chart.selectedIndex < data.count && [data objectAtIndex:chart.selectedIndex]!=nil)
+        {
+            //线粗细
+            CGContextSetLineWidth(context, 0.1f);
+            CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:1 green:1 blue:1 alpha:1.0].CGColor);
+            
+            //纵向游标
+            CGContextMoveToPoint(context, ix, sec.frame.origin.y+sec.paddingTop);
+            CGContextAddLineToPoint(context,ix,sec.frame.size.height+sec.frame.origin.y);
+            CGContextStrokePath(context);
+            
+            //横向游标
+            ix  = sec.frame.origin.x+sec.paddingLeft+(chart.rangeFrom)*chart.plotWidth;
+            iNx = sec.frame.origin.x+sec.paddingLeft+(chart.rangeTo)*chart.plotWidth;
+            CGContextMoveToPoint(context, ix+chart.plotPadding, iyo);
+            CGContextAddLineToPoint(context, iNx-chart.plotPadding,iyo);
             CGContextStrokePath(context);
         }
         
-        CGContextMoveToPoint(context, ix+chart.plotPadding, iyo);
-        CGContextAddLineToPoint(context, iNx-chart.plotPadding,iyo);
-        CGContextStrokePath(context);
+        ix  = sec.frame.origin.x+sec.paddingLeft+(i-chart.rangeFrom)*chart.plotWidth;
+        iNx = sec.frame.origin.x+sec.paddingLeft+(i+1-chart.rangeFrom)*chart.plotWidth;
         
-        CGContextMoveToPoint(context, ix+chart.plotWidth/2, iyh);
-        CGContextAddLineToPoint(context,ix+chart.plotWidth/2,iyl);
-        CGContextStrokePath(context);
+        if (i<data.count-1)
+        {
+            CGContextSetLineWidth(context, 1.0f);
+            CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:R green:G blue:B alpha:1.0].CGColor);
+            float valNext  = [[[data objectAtIndex:(i+1)] objectAtIndex:0] floatValue];
+            float iNy = [chart getLocalY:valNext withSection:section withAxis:yAxis];
+            //1.描点
+            CGContextMoveToPoint(context, ix+chart.plotPadding, iyo);
+            CGContextAddLineToPoint(context, ix+chart.plotPadding+1,iyo);
+            CGContextStrokePath(context);
+            
+            //2.连线
+            CGContextMoveToPoint(context, ix+chart.plotPadding, iyo);
+            CGContextAddLineToPoint(context, iNx+chart.plotPadding,iNy);
+            CGContextStrokePath(context);
+        }else
+        {
+            //1.描点
+            CGContextSetLineWidth(context, 1.0f);
+            CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:R green:G blue:B alpha:1.0].CGColor);
+            CGContextMoveToPoint(context, ix+chart.plotPadding, iyo);
+            CGContextAddLineToPoint(context, ix+chart.plotPadding+1,iyo);
+            CGContextStrokePath(context);
+        }
+        
+        
     }
     
 }
