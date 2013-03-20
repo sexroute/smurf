@@ -75,14 +75,26 @@
 {
     int lnDataSize = 10;
     NSMutableArray *   lpArray= [NSMutableArray arrayWithCapacity:lnDataSize];
+    
+    NSLocale *locale = [NSLocale currentLocale];
+    NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
+    [formatter setTimeStyle:NSDateFormatterShortStyle];
+    [formatter setDateStyle:NSDateFormatterNoStyle];
+    NSString *dateFormat = [NSDateFormatter dateFormatFromTemplate:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'" options:0 locale:nil];
+    [formatter setDateFormat:dateFormat];
+    [formatter setLocale:locale];
     for (int i=0; i<lnDataSize; i++)
     {
         NSMutableArray * lpDataArray = [NSMutableArray arrayWithCapacity:6];
         [lpDataArray addObject:[NSString  stringWithFormat:@"%f",i*1.0]];
-        [lpDataArray addObject:[NSString  stringWithFormat:@"%f",i*1.0]];;
-        [lpDataArray addObject:[NSString  stringWithFormat:@"%f",i*1.0]];
-        [lpDataArray addObject:[NSString  stringWithFormat:@"%f",i*1.0]];
-        [lpDataArray addObject:[NSString  stringWithFormat:@"%f",i*1.0]];
+        [lpDataArray addObject:[NSString  stringWithFormat:@"%@",[formatter stringFromDate:[NSDate date]]]];
+        
+        
+
+//        [lpDataArray addObject:[NSString  stringWithFormat:@"%f",i*1.0]];
+//        [lpDataArray addObject:[NSString  stringWithFormat:@"%f",i*1.0]];
+//        [lpDataArray addObject:[NSString  stringWithFormat:@"%f",i*1.0]];
+//        [lpDataArray addObject:[NSString  stringWithFormat:@"%f",i*1.0]];
         [lpArray addObject:lpDataArray];
     }
    

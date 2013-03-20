@@ -26,6 +26,11 @@
     NSMutableArray *data          = [serie objectForKey:@"data"];
     int            yAxis          = [[serie objectForKey:@"yAxis"] intValue];
     int            section        = [[serie objectForKey:@"section"] intValue];
+    float         ldbPointWidth  = [[serie objectForKey:KEY_POINT_WIDTH] floatValue];
+    if (0==ldbPointWidth)
+    {
+        ldbPointWidth = KEY_DEFAULT_POINT_WIDTH;
+    }
     NSString       *color         = [serie objectForKey:@"color"];
     
     float R   = [[[color componentsSeparatedByString:@","] objectAtIndex:0] floatValue]/255;
@@ -46,10 +51,6 @@
         float ix  = sec.frame.origin.x+sec.paddingLeft+(i-chart.rangeFrom)*chart.plotWidth;
         float iNx = sec.frame.origin.x+sec.paddingLeft+(i+1-chart.rangeFrom)*chart.plotWidth;
         float iyo = [chart getLocalY:val withSection:section withAxis:yAxis];
-        
-        
-        
-        
         
         if(i == chart.selectedIndex && chart.selectedIndex < data.count && [data objectAtIndex:chart.selectedIndex]!=nil)
         {
@@ -73,29 +74,24 @@
         ix  = sec.frame.origin.x+sec.paddingLeft+(i-chart.rangeFrom)*chart.plotWidth;
         iNx = sec.frame.origin.x+sec.paddingLeft+(i+1-chart.rangeFrom)*chart.plotWidth;
         
+        //1.描点
+        CGFloat components[] = { R, G, B, 1.0f};
+        CGContextSetFillColor(context, components);
+        CGContextFillEllipseInRect(context, CGRectMake(ix-ldbPointWidth, iyo-ldbPointWidth, 2*ldbPointWidth, 2*ldbPointWidth));
+        
         if (i<data.count-1)
         {
             CGContextSetLineWidth(context, 1.0f);
             CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:R green:G blue:B alpha:1.0].CGColor);
             float valNext  = [[[data objectAtIndex:(i+1)] objectAtIndex:0] floatValue];
             float iNy = [chart getLocalY:valNext withSection:section withAxis:yAxis];
-            //1.描点
-            CGContextMoveToPoint(context, ix+chart.plotPadding, iyo);
-            CGContextAddLineToPoint(context, ix+chart.plotPadding+1,iyo);
-            CGContextStrokePath(context);
-            
+           
+
             //2.连线
             CGContextMoveToPoint(context, ix+chart.plotPadding, iyo);
             CGContextAddLineToPoint(context, iNx+chart.plotPadding,iNy);
             CGContextStrokePath(context);
-        }else
-        {
-            //1.描点
-            CGContextSetLineWidth(context, 1.0f);
-            CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:R green:G blue:B alpha:1.0].CGColor);
-            CGContextMoveToPoint(context, ix+chart.plotPadding, iyo);
-            CGContextAddLineToPoint(context, ix+chart.plotPadding+1,iyo);
-            CGContextStrokePath(context);
+            
         }
         
         
@@ -220,10 +216,11 @@
 	
 	YAxis *yaxis = [[[chart.sections objectAtIndex:[section intValue]] yAxises] objectAtIndex:[yAxis intValue]];
 	
-    float high = [[[data objectAtIndex:chart.rangeFrom] objectAtIndex:2] floatValue];
-    float low = [[[data objectAtIndex:chart.rangeFrom] objectAtIndex:3] floatValue];
+    float high = [[[data objectAtIndex:chart.rangeFrom] objectAtIndex:0] floatValue];
+    float low = [[[data objectAtIndex:chart.rangeFrom] objectAtIndex:0] floatValue];
     
-    if(!yaxis.isUsed){
+    if(!yaxis.isUsed)
+    {
         [yaxis setMax:high];
         [yaxis setMin:low];
         yaxis.isUsed = YES;
@@ -237,8 +234,8 @@
             continue;
         }
         
-        float high = [[[data objectAtIndex:i] objectAtIndex:2] floatValue];
-        float low = [[[data objectAtIndex:i] objectAtIndex:3] floatValue];
+        float high = [[[data objectAtIndex:i] objectAtIndex:0] floatValue];
+        float low = [[[data objectAtIndex:i] objectAtIndex:0] floatValue];
         if(high > [yaxis max])
             [yaxis setMax:high];
         if(low < [yaxis min])
@@ -283,7 +280,10 @@
     {
         NSAutoreleasePool * lpPool = [[NSAutoreleasePool alloc]init];
         float lfVal = [[[data objectAtIndex:chart.selectedIndex] objectAtIndex:0]floatValue];
-        NSString * lpStrInfo   = [[data objectAtIndex:chart.selectedIndex] objectAtIndex:1] ;
+        NSString * lpStrInfo   = nil ;
+        if ([[data objectAtIndex:chart.selectedIndex] count]>1) {
+            lpStrInfo = [[data objectAtIndex:chart.selectedIndex] objectAtIndex:1];
+        }
         NSMutableDictionary *tmp = [[[NSMutableDictionary alloc] init]autorelease];
         NSMutableString *l = [[[NSMutableString alloc] init]autorelease];
         
@@ -332,7 +332,7 @@
         //3.detail info
         l = [[[NSMutableString alloc] init]autorelease];
         tmp = [[[NSMutableDictionary alloc] init]autorelease];
-        [l appendFormat:@"%@",lpStrUnit];
+        [l appendFormat:@"%@",lpStrInfo];
         [tmp setObject:l forKey:KEY_TEXT];
         
         //font
@@ -346,6 +346,8 @@
         [clr appendFormat:@"%f",ZB];
         [tmp setObject:clr forKey:KEY_COLOR];
         
+        //label type
+        [tmp setObject:[NSString stringWithFormat:@"%d",KEY_LABEL_TYPE_DETAIL] forKey:KEY_LABEL_TYPE];
         //position
         [tmp setObject:@"7" forKey:KEY_PADDING_TOP];
         [label addObject:tmp];

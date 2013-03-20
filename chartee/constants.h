@@ -28,4 +28,10 @@
 #define KEY_UNIT       @"unit"
 #define KEY_LABEL_COLOR @"labelColor"
 #define KEY_LABEL_DETAIL_INFO_COLOR @"DetailInfoColor"
+#define KEY_POINT_WIDTH @"pointwidth"
+#define KEY_LABEL_TYPE @"labeltype"
+#define KEY_LABEL_TYPE_DETAIL 2
+#define KEY_LABEL_TYPE_VAL 0
+#define KEY_LABEL_TYPE_UNIT 1
+#define KEY_DEFAULT_POINT_WIDTH 2
 #endif
