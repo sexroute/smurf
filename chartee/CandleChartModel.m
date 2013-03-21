@@ -56,7 +56,7 @@
         {
             //线粗细
             CGContextSetLineWidth(context, 0.1f);
-            CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:1 green:1 blue:1 alpha:1.0].CGColor);
+            CGContextSetStrokeColorWithColor(context, [[[UIColor alloc] initWithRed:1 green:1 blue:1 alpha:1.0]autorelease].CGColor);
             
             //纵向游标
             CGContextMoveToPoint(context, ix, sec.frame.origin.y+sec.paddingTop);
@@ -82,7 +82,7 @@
         if (i<data.count-1)
         {
             CGContextSetLineWidth(context, 1.0f);
-            CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:R green:G blue:B alpha:1.0].CGColor);
+            CGContextSetStrokeColorWithColor(context, [[[UIColor alloc] initWithRed:R green:G blue:B alpha:1.0]autorelease].CGColor);
             float valNext  = [[[data objectAtIndex:(i+1)] objectAtIndex:0] floatValue];
             float iNy = [chart getLocalY:valNext withSection:section withAxis:yAxis];
            
@@ -154,7 +154,7 @@
         float iyl = [chart getLocalY:low withSection:section withAxis:yAxis];
         
         if(i == chart.selectedIndex && chart.selectedIndex < data.count && [data objectAtIndex:chart.selectedIndex]!=nil){
-            CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:0.2 green:0.2 blue:0.2 alpha:1.0].CGColor);
+            CGContextSetStrokeColorWithColor(context, [[[UIColor alloc] initWithRed:0.2 green:0.2 blue:0.2 alpha:1.0]autorelease].CGColor);
             CGContextMoveToPoint(context, ix+chart.plotWidth/2, sec.frame.origin.y+sec.paddingTop);
             CGContextAddLineToPoint(context,ix+chart.plotWidth/2,sec.frame.size.height+sec.frame.origin.y);
             CGContextStrokePath(context);
@@ -162,25 +162,25 @@
         
         if(close == open){
             if(i == chart.selectedIndex){
-                CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:SR green:SG blue:SB alpha:1.0].CGColor);
+                CGContextSetStrokeColorWithColor(context, [[[UIColor alloc] initWithRed:SR green:SG blue:SB alpha:1.0]autorelease].CGColor);
             }else{
-                CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:R green:G blue:B alpha:1.0].CGColor);
+                CGContextSetStrokeColorWithColor(context, [[[UIColor alloc] initWithRed:R green:G blue:B alpha:1.0]autorelease].CGColor);
             }
         }else{
             if(close < open){
                 if(i == chart.selectedIndex){
-                    CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:NSR green:NSG blue:NSB alpha:1.0].CGColor);
+                    CGContextSetStrokeColorWithColor(context, [[[UIColor alloc] initWithRed:NSR green:NSG blue:NSB alpha:1.0]autorelease].CGColor);
                     CGContextSetRGBFillColor(context, NSR, NSG, NSB, 1.0);
                 }else{
-                    CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:NR green:NG blue:NB alpha:1.0].CGColor);
+                    CGContextSetStrokeColorWithColor(context, [[[UIColor alloc] initWithRed:NR green:NG blue:NB alpha:1.0]autorelease].CGColor);
                     CGContextSetRGBFillColor(context, NR, NG, NB, 1.0);
                 }
             }else{
                 if(i == chart.selectedIndex){
-                    CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:SR green:SG blue:SB alpha:1.0].CGColor);
+                    CGContextSetStrokeColorWithColor(context, [[[UIColor alloc] initWithRed:SR green:SG blue:SB alpha:1.0]autorelease].CGColor);
                     CGContextSetRGBFillColor(context, SR, SG, SB, 1.0);
                 }else{
-                    CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:R green:G blue:B alpha:1.0].CGColor);
+                    CGContextSetStrokeColorWithColor(context, [[[UIColor alloc] initWithRed:R green:G blue:B alpha:1.0]autorelease].CGColor);
                     CGContextSetRGBFillColor(context, R, G, B, 1.0);
                 }
             }

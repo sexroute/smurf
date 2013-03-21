@@ -20,7 +20,7 @@
     
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-   self.candleChart = [[Chart alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-40)];
+   self.candleChart = [[[Chart alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-40)]autorelease];
     
     [self.view addSubview:self.candleChart];
     [self initChart];
@@ -107,7 +107,7 @@
 {
 	NSMutableArray *padding = [NSMutableArray arrayWithObjects:@"20",@"20",@"20",@"20",nil];
 	[self.candleChart setPadding:padding];
-	NSMutableArray *secs = [[NSMutableArray alloc] init];
+	NSMutableArray *secs = [[[NSMutableArray alloc] init]autorelease];
     //分区，数值大小代表分区的高低
 	[secs addObject:@"4"]; //占位4/7
 	[secs addObject:@"2"]; //占位2/7
@@ -239,8 +239,9 @@
 	
 	NSString *indicatorsString =[NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"indicators" ofType:@"json"] encoding:NSUTF8StringEncoding error:nil];
     
-	if(indicatorsString != nil){
-		NSArray *indicators = [indicatorsString JSONValue];
+	if(indicatorsString != nil)
+    {
+		NSArray *indicators = (NSArray *)[indicatorsString JSONValue];
 		for(NSObject *indicator in indicators){
 			if([indicator isKindOfClass:[NSArray class]]){
 				NSMutableArray *arr = [[NSMutableArray alloc] init];

@@ -400,14 +400,14 @@
 			NSString *format=[@"%." stringByAppendingFormat:@"%df",yaxis.decimal];
 			
 			float baseY = [self getLocalY:yaxis.baseValue withSection:secIndex withAxis:aIndex];
-			CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:0.2 green:0.2 blue:0.2 alpha:1.0].CGColor);
+			CGContextSetStrokeColorWithColor(context, [[[UIColor alloc] initWithRed:0.2 green:0.2 blue:0.2 alpha:1.0]autorelease].CGColor);
 			CGContextMoveToPoint(context,sec.frame.origin.x+sec.paddingLeft,baseY);
 			CGContextAddLineToPoint(context,sec.frame.origin.x+sec.paddingLeft-2,baseY);
 			CGContextStrokePath(context);
 			
 			[[@"" stringByAppendingFormat:format,yaxis.baseValue] drawAtPoint:CGPointMake(sec.frame.origin.x-1,baseY-7) withFont:[UIFont fontWithName:self.m_pStrFontName size: self.m_nYAxisFontSize]];
 			
-			CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:0.15 green:0.15 blue:0.15 alpha:1.0].CGColor);
+			CGContextSetStrokeColorWithColor(context, [[[UIColor alloc] initWithRed:0.15 green:0.15 blue:0.15 alpha:1.0]autorelease].CGColor);
 			CGContextMoveToPoint(context,sec.frame.origin.x+sec.paddingLeft,baseY);
 			CGContextAddLineToPoint(context,sec.frame.origin.x+sec.frame.size.width,baseY);
             
@@ -440,7 +440,7 @@
 				if(yaxis.baseValue - i*step >= yaxis.min){
 					float iy = [self getLocalY:(yaxis.baseValue - i*step) withSection:secIndex withAxis:aIndex];
 					
-					CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:0.2 green:0.2 blue:0.2 alpha:1.0].CGColor);
+					CGContextSetStrokeColorWithColor(context, [[[UIColor alloc] initWithRed:0.2 green:0.2 blue:0.2 alpha:1.0]autorelease].CGColor);
 					CGContextMoveToPoint(context,sec.frame.origin.x+sec.paddingLeft,iy);
 					CGContextAddLineToPoint(context,sec.frame.origin.x+sec.paddingLeft-2,iy);
 					CGContextStrokePath(context);
@@ -465,7 +465,7 @@
     CGContextRef context = UIGraphicsGetCurrentContext();
 	CGContextSetShouldAntialias(context, NO);
 	CGContextSetLineWidth(context, 1.f);
-	CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:0.2 green:0.2 blue:0.2 alpha:1.0].CGColor);
+	CGContextSetStrokeColorWithColor(context, [[[UIColor alloc] initWithRed:0.2 green:0.2 blue:0.2 alpha:1.0]autorelease].CGColor);
 	for(int secIndex=0;secIndex<self.sections.count;secIndex++){
 		Section *sec = [self.sections objectAtIndex:secIndex];
 		if(sec.hidden){
